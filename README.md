@@ -21,8 +21,9 @@ https://kb.vmware.com/kb/2032184
       ├── vmxnet3ndis6.cat
       ├── vmxnet3ndis6.inf
       └── vmxnet3ndis6ver.dll
-<pre>
+</pre>
 
+Grab your installer .iso files and put them in the ISO directory. 
 <pre>
 ISO
 ├── RELEASE_CLIENTENTERPRISE_OEM_X64FRE_EN-US.ISO
