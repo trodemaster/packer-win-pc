@@ -1,0 +1,269 @@
+{
+  "variables": {
+    "blob_webserver": "{{env `BLOB_WEBSERVER`}}",
+    "localuser_win_pass": "{{env `LOCALUSER_WIN_PASS`}}"
+  },
+  "builders": [
+    {
+      "type": "vmware-iso",
+      "communicator": "winrm",
+      "skip_compaction": "false",
+      "output_directory": "VM/Win10-vmware",
+      "vm_name": "Win10",
+      "vmdk_name": "Win10",
+      "iso_url": "ISO/RELEASE_CLIENTENTERPRISE_OEM_X64FRE_EN-US.ISO",
+      "iso_checksum_type": "sha256",
+      "iso_checksum": "65de98708a7016d76e1a25ae387f64da8a4e9c9d4f165bea1711d6872330316a",
+      "boot_wait": "6m",
+      "winrm_username": "administrator",
+      "winrm_password": "{{user `localuser_win_pass`}}",
+      "winrm_timeout": "2h",
+      "shutdown_command": "shutdown /s /t 5 /f /d p:4:1",
+      "shutdown_timeout": "5m",
+      "guest_os_type": "windows9-64",
+      "disk_size": "20480",
+      "disk_type_id": "0",
+      "floppy_files": [
+        "answer_files/vmw/10/Autounattend.xml",
+        "FILES/pvscsi",
+        "scripts/bootstrap-win.ps1",
+        "FILES/vmxnet3"
+      ],
+      "headless": false,
+      "vmx_data": {
+        "ethernet0.virtualdev": "vmxnet3",
+        "virtualhw.productcompatibility": "esx",
+        "virtualhw.version": "10",
+        "vcpu.hotadd": "TRUE",
+        "mem.hotadd": "TRUE",
+        "memsize": "4096",
+        "scsi0.virtualDev": "pvscsi",
+        "numvcpus": "2",
+        "cpuid.coresPerSocket": "2",
+        "hypervisor.cpuid.v1": "FALSE",
+        "tools.upgrade.policy": "manual",
+        "tools.syncTime": "0",
+        "time.synchronize.continue": "1",
+        "time.synchronize.restore": "1",
+        "time.synchronize.resume.disk": "1",
+        "time.synchronize.shrink": "1",
+        "time.synchronize.tools.startup": "1",
+        "time.synchronize.tools.enable": "1",
+        "time.synchronize.resume.host": "1"
+      },
+      "vmx_data_post": {
+        "memsize": "4096",
+        "numvcpus": "1",
+        "cpuid.coresPerSocket": "1",
+        "ide1:0.startConnected": "FALSE",
+        "ide1:0.deviceType": "atapi-cdrom",
+        "ide1:0.fileName": "cdrom0",
+        "ide1:0.present": "TRUE"
+      }
+    },
+    {
+      "type": "qemu",
+      "communicator": "winrm",
+      "winrm_port": "5985",
+      "skip_compaction": "false",
+      "output_directory": "VM/Win10-qemu",
+      "format": "qcow2",
+      "accelerator": "kvm",
+      "qemuargs": [
+        [
+          "-m",
+          "4096"
+        ],
+        [
+          "-usbdevice",
+          "tablet"
+        ],
+        [
+          "-smp",
+          "2"
+        ],
+        [
+          "-cpu",
+          "Westmere"
+        ]
+      ],
+      "net_device": "virtio-net",
+      "disk_interface": "virtio-scsi",
+     "disk_cache": "unsafe",
+      "vm_name": "Win10.qcow2",
+      "iso_url": "ISO/RELEASE_CLIENTENTERPRISE_OEM_X64FRE_EN-US.ISO",
+      "iso_checksum_type": "sha256",
+      "iso_checksum": "65de98708a7016d76e1a25ae387f64da8a4e9c9d4f165bea1711d6872330316a",
+      "boot_wait": "6m",
+      "winrm_username": "administrator",
+      "winrm_password": "{{user `localuser_win_pass`}}",
+      "winrm_timeout": "2h",
+      "shutdown_command": "exit 0",
+      "shutdown_timeout": "30m",
+      "disk_size": "20480",
+      "floppy_files": [
+        "answer_files/qemu/10/Autounattend.xml",
+        "FILES/virtio-win/Win8.1/",
+        "scripts/bootstrap-win.ps1"
+      ],
+      "headless": false
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "only": [
+        "vmware-iso"
+      ],
+      "pause_before": "5m",
+      "source": "scripts/SetupComplete-vmw.ps1",
+      "destination": "C:/Windows/Temp/SetupComplete.ps1"
+    },
+    {
+      "type": "file",
+      "only": [
+        "qemu"
+      ],
+      "source": "scripts/SetupComplete-qemu.ps1",
+      "destination": "C:/Windows/Temp/SetupComplete.ps1"
+    },
+    {
+      "type": "powershell",
+      "only": [
+        "vmware-iso"
+      ],
+      "elevated_user": "administrator",
+      "elevated_password": "{{user `localuser_win_pass`}}",
+      "script": "scripts/tools-winrm.ps1",
+      "remote_path": "c:/Windows/temp/tools-winrm.ps1"
+    },
+    {
+      "pause_before": "5m",
+      "only": [
+        "vmware-iso"
+      ],
+      "restart_timeout": "1h",
+      "type": "windows-restart"
+    },
+    {
+      "type": "file",
+      "only": [
+        "qemu"
+      ],
+      "source": "cloud_init/cloudbase-init.conf",
+      "destination": "C:/Windows/Temp/cloudbase-init.conf"
+    },
+    {
+      "type": "file",
+      "only": [
+        "qemu"
+      ],
+      "source": "cloud_init/cloudbase-init-unattend.conf",
+      "destination": "C:/Windows/Temp/cloudbase-init-unattend.conf"
+    },
+    {
+      "type": "file",
+      "only": [
+        "qemu"
+      ],
+      "source": "cloud_init/cloudbase-init-firstboot.ps1",
+      "destination": "C:/Windows/Temp/cloudbase-init-firstboot.ps1"
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "administrator",
+      "elevated_password": "{{user `localuser_win_pass`}}",
+      "only": [
+        "qemu"
+      ],
+      "script": "scripts/cloudbase-init.ps1",
+      "remote_path": "c:/Windows/temp/cloudbase-init.ps1"
+    },
+    {
+      "type": "windows-restart",
+      "restart_timeout": "10h"
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "administrator",
+      "elevated_password": "{{user `localuser_win_pass`}}",
+      "environment_vars": [
+        "wsus_server={{user `wsus_server`}}",
+        "wsus_group={{user `wsus_group`}}"
+      ],
+      "remote_path": "c:/Windows/temp/windows-update-winrm.ps1",
+      "script": "scripts/windows-update-winrm.ps1"
+    },
+    {
+      "type": "windows-restart",
+      "restart_timeout": "10h"
+    },
+    {
+      "type": "powershell",
+      "inline": "get-content c:/windows/temp/windows-update-winrm.log | format-wide | write-output",
+      "remote_path": "c:/Windows/temp/get_wulist.ps1"
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "administrator",
+      "elevated_password": "{{user `localuser_win_pass`}}",
+      "inline": "net user localuser {{user `localuser_win_pass`}}",
+      "remote_path": "c:/Windows/temp/setpass.ps1"
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "administrator",
+      "start_retry_timeout": "8h",
+      "elevated_password": "{{user `localuser_win_pass`}}",
+      "script": "scripts/configure-windows-local-policy.ps1",
+      "remote_path": "c:/Windows/temp/configure-windows-local-policy.ps1"
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "administrator",
+      "start_retry_timeout": "8h",
+      "elevated_password": "{{user `localuser_win_pass`}}",
+      "script": "scripts/configure-win.ps1",
+      "remote_path": "c:/Windows/temp/configure-win.ps1"
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "administrator",
+      "start_retry_timeout": "8h",
+      "elevated_password": "{{user `localuser_win_pass`}}",
+      "script": "scripts/cleanup-compact.ps1",
+      "remote_path": "c:/Windows/temp/cleanup-compact.ps1"
+    },
+    {
+      "elevated_user": "administrator",
+      "elevated_password": "{{user `localuser_win_pass`}}",
+      "type": "powershell",
+      "inline": "get-childitem -Recurse \"C:/Windows/Panther\" | remove-item -Recurse -Force -ErrorAction SilentlyContinue",
+      "remote_path": "c:/Windows/temp/clean_panther.ps1"
+    },
+    {
+      "elevated_user": "administrator",
+      "elevated_password": "{{user `localuser_win_pass`}}",
+      "type": "powershell",
+      "inline": "get-childitem -Recurse \"C:/Windows/Temp\" | remove-item -Recurse -Force -ErrorAction SilentlyContinue",
+      "remote_path": "c:/Windows/temp/clean_temp.ps1"
+    },
+    {
+      "elevated_user": "administrator",
+      "elevated_password": "{{user `localuser_win_pass`}}",
+      "type": "powershell",
+      "inline": "start-process powershell -argumentlist \"Get-ScheduledTask | Where TaskPath -eq '\\' | Unregister-ScheduledTask -Confirm:`$false\"",
+      "remote_path": "c:/Windows/temp/purge_tasks.ps1"
+    },
+    {
+      "elevated_user": "administrator",
+      "elevated_password": "{{user `localuser_win_pass`}}",
+      "only": [
+        "qemu"
+      ],
+      "type": "powershell",
+      "script": "scripts/sysprep-shutdown.ps1",
+      "remote_path": "c:/Windows/temp/sysprep-shutdown.ps1"
+    }
+  ]
+}
