@@ -1,5 +1,7 @@
 # packer-win-pc
 ***packer.io templates &amp; scripts for building private cloud optimized Windows OS images***
+If your unclear what packer templates are about check http://packer.io
+
 This template is used to create both VMware ESXi and OpenStack/KVM templates of Windows 10. It utilzes Windows RM and PowerShell scripts to build the latest OS with the modern tools.
 
 **Prerequsits**
@@ -29,7 +31,7 @@ ISO
 └── RELEASE_SERVER_OEM_X64FRE_EN-US.ISO
 </pre>
 
-***Required changes to the template file**
+***Required changes to the template file***
 ISO filename
 You must edit the Win10.json file to inclued the correct path to your Windows 10 .iso file. Make sure to update both builders. Additionally update the sha256 checksum that matches your .iso. 
 
