@@ -28,8 +28,7 @@ Grab your installer .iso files and put them in the ISO directory.
 ISO
 ├── RELEASE_CLIENTENTERPRISE_OEM_X64FRE_EN-US.ISO
 └── RELEASE_SERVER_OEM_X64FRE_EN-US.ISO
-<pre>
-
+</pre>
 
 ***Required changes to the template file**
 ISO filename
