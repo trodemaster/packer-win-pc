@@ -4,6 +4,10 @@ packer.io templates &amp; scripts for building private cloud optimized Windows O
 
 **Prerequsits**
 
+
+Extract the pvscsi and vmxnet 3 drivers from VMware tools and popluate the FILES directory. 
+https://kb.vmware.com/kb/2032184
+
 <pre>
   FILES
   ├── pvscsi
