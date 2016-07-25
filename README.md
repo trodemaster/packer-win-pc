@@ -29,3 +29,11 @@ ISO
 ├── RELEASE_CLIENTENTERPRISE_OEM_X64FRE_EN-US.ISO
 └── RELEASE_SERVER_OEM_X64FRE_EN-US.ISO
 <pre>
+
+
+***Required changes to the template file**
+ISO filename
+You must edit the Win10.json file to inclued the correct path to your Windows 10 .iso file. Make sure to update both builders. Additionally update the sha256 checksum that matches your .iso. 
+
+***Private data***
+In this example the only private data is the password used for local administrator and "localuser" user account. Copy the Example-privatedate.json to privatedata.json in the root of the directory. Add your own password here and the file will be ignored by git. Follow this practice for any other data you do not want in your repo.  
