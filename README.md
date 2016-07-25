@@ -1,5 +1,5 @@
 # packer-win-pc
-***packer.io templates &amp; scripts for building private cloud optimized Windows OS images***
+***packer.io templates &amp; scripts for building private cloud optimized Windows OS images.***
 If your unclear what packer templates are about check http://packer.io
 
 This template is used to create both VMware ESXi and OpenStack/KVM templates of Windows 10. It utilzes Windows RM and PowerShell scripts to build the latest OS with the modern tools.
