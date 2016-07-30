@@ -4,6 +4,10 @@ If your unclear what packer templates are about check http://packer.io
 
 This template is used to create both VMware ESXi and OpenStack/KVM templates of Windows 10. It utilzes Windows RM and PowerShell scripts to build the latest OS with the modern tools. These images use virtio/pvscsi intefaces for the boot disk for optimized IO. 
 
+***Google Groups thread***
+If you want to discuss this project please use this thread. 
+https://groups.google.com/forum/#!topic/packer-tool/6evwAHomcaA
+
 **Prerequsits**
 
 You will need to have http://packer.io installed and the appropriate hypervisor. QEMU/KVM and VMware Workstation/Fusion/Player are ones you should have avialable. Linux systems that can have Workstation and QEMU/KVM are ideal as you can build both images at the same time given enough system resrouces. 
