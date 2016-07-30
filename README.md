@@ -2,7 +2,7 @@
 ***packer.io templates &amp; scripts for building private cloud optimized Windows OS images.***
 If your unclear what packer templates are about check http://packer.io
 
-This template is used to create both VMware ESXi and OpenStack/KVM templates of Windows 10. It utilzes Windows RM and PowerShell scripts to build the latest OS with the modern tools.
+This template is used to create both VMware ESXi and OpenStack/KVM templates of Windows 10. It utilzes Windows RM and PowerShell scripts to build the latest OS with the modern tools. These images use virtio/pvscsi intefaces for the boot disk for optimized IO. 
 
 **Prerequsits**
 
@@ -50,7 +50,7 @@ ISO
 
 ***Required changes to the template file***
 ISO filename
-You must edit the Win10.json file to inclued the correct path to your Windows 10 .iso file. Make sure to update both builders. Additionally update the sha256 checksum that matches your .iso. 
+You must edit the Win10.json file to inclued the correct path to your Windows 10 .iso file in both builders. Additionally update the sha256 checksum that matches your .iso. 
 
 ***Private data***
 In this example the only private data is the password used for local administrator and "localuser" user account. Copy the Example-privatedate.json to privatedata.json in the root of the directory. Add your own password here and the file will be ignored by git. Follow this practice for any other data you do not want in your repo.  
@@ -71,6 +71,8 @@ Build the OpenStack image only
 <pre><code>packer build -force -var-file privatedata.json -only qemu Win10.json</pre></code>
 
 
+***References***
+https://github.com/joefitzgerald/packer-windows
 
 
 
