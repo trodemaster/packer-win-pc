@@ -9,19 +9,34 @@ This template is used to create both VMware ESXi and OpenStack/KVM templates of 
 Extract the pvscsi and vmxnet3 drivers from VMware tools installer and popluate the FILES directory. 
 https://kb.vmware.com/kb/2032184
 
+Aquire a set of virtio windows drivers. Ideally install the virtio-win package on redhat and extract those as they are signed drivers. 
+
+Populate the FILES with the drivers as shown below. These get written to a flopy image before the sysetem is booted. Downloading them after boot is not realistic. 
 <pre>
-  FILES
-  ├── pvscsi
-  │   ├── pvscsi.cat
-  │   ├── pvscsi.inf
-  │   ├── pvscsi.sys
-  │   └── pvscsiver.dll
-  └── vmxnet3
-      ├── vmxnet3n61x64.sys
-      ├── vmxnet3n61x86.sys
-      ├── vmxnet3ndis6.cat
-      ├── vmxnet3ndis6.inf
-      └── vmxnet3ndis6ver.dll
+FILES
+├── pvscsi
+│   ├── pvscsi.cat
+│   ├── pvscsi.inf
+│   ├── pvscsi.sys
+│   ├── pvscsiver.dll
+│   └── txtsetup.oem
+├── virtio-win
+│   └── Win8.1
+│       ├── netkvm.cat
+│       ├── netkvm.inf
+│       ├── netkvm.sys
+│       ├── vioscsi.cat
+│       ├── vioscsi.inf
+│       ├── vioscsi.sys
+│       ├── viostor.cat
+│       ├── viostor.inf
+│       └── viostor.sys
+└── vmxnet3
+    ├── vmxnet3n61x64.sys
+    ├── vmxnet3n61x86.sys
+    ├── vmxnet3ndis6.cat
+    ├── vmxnet3ndis6.inf
+    └── vmxnet3ndis6ver.dll
 </pre>
 
 Grab your installer .iso files and put them in the ISO directory. 
